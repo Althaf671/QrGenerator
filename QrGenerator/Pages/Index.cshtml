@@ -1,0 +1,58 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "ASP.NET Razor Pages";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-8">
+            <h1 class="display-4">QR Code Generator</h1>
+
+            @* form *@
+            <form method="post">
+                <label asp-for="@Model.Input.Url" class="form-label"></label>
+                <input 
+                    asp-for="@Model.Input.Url"
+                    class="form-control mb-1" 
+                    type="url" 
+                    placeholder="https://github.com" />
+                <span asp-validation-for="@Model.Input.Url" class="text-danger"></span>
+                <div class="mt-3 d-flex gap-3">
+                    <button 
+                        type="submit" 
+                        asp-page-handler="Generate" 
+                        class="btn btn-primary">
+                        Generate QR Code
+                    </button>
+                    <button 
+                        type="submit"
+                        type="submit" 
+                        asp-page-handler="Download" 
+                        class="btn btn-outline-primary">
+                        Download PNG
+                    </button>
+                </div>
+            </form>
+
+            @* render PNG *@
+            @if (Model.QrCodeDataUrl is not null)
+            {
+                <div class="mt-5 text-center">
+                    <h2 class="h5 mb-3">Hasil QR Code</h2>
+                    <img 
+                        src="@Model.QrCodeDataUrl"
+                        alt="Kode QR anda"
+                        class="img-fluid border p-3"
+                        style="max-width: 300px;" />
+
+                    <p class="text-muted mt-3 text-break">@Model.Input.Url</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
