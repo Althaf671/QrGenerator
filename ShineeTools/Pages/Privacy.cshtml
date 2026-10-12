@@ -1,0 +1,97 @@
+﻿@page "/legal/privacy"
+
+@using ShineeTools.Core.Pages
+
+@model PrivacyModel
+
+@{
+    ViewData["Title"] = "Kebijakan Privasi";
+}
+
+<div class="container py-5" style="max-width: 800px;">
+    <a asp-page="/Index"
+       class="text-primary text-decoration-none d-inline-flex align-items-center gap-2 mb-4">
+        <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
+        Kembali
+    </a>
+
+    <h1 class="display-5 fw-semibold mb-3">Kebijakan Privasi</h1>
+
+    <p class="text-secondary mb-5">
+        Terakhir diperbarui: 13 Oktober 2026
+    </p>
+
+    <section class="mb-4">
+        <h2 class="h5 fw-semibold">1. Tentang Shinee Tools</h2>
+        <p>
+            Shinee Tools adalah kumpulan alat sederhana yang dapat digunakan
+            secara gratis melalui peramban untuk membantu berbagai kebutuhan
+            digital, seperti membuat QR Code dan mengolah file.
+        </p>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h5 fw-semibold">2. Data dan File Pengguna</h2>
+        <p>
+            Data yang dimasukkan dan file yang dipilih diproses sesuai dengan
+            cara kerja masing-masing alat. Untuk alat yang berjalan langsung
+            di peramban, data dan file diproses pada perangkat pengguna tanpa
+            perlu diunggah ke server aplikasi.
+        </p>
+        <p>
+            Kami tidak meminta pengguna memasukkan informasi pribadi yang
+            tidak diperlukan untuk menggunakan alat yang tersedia.
+        </p>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h5 fw-semibold">3. Keamanan dan Layanan Pihak Ketiga</h2>
+        <p>
+            Situs ini menggunakan layanan hosting untuk menjalankan aplikasi.
+            Penyedia hosting dapat memproses informasi teknis tertentu sesuai
+            dengan kebutuhan operasional dan kebijakannya.
+        </p>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h5 fw-semibold">4. Perubahan Kebijakan</h2>
+        <p>
+            Kebijakan ini dapat diperbarui apabila terdapat perubahan pada
+            fitur atau cara kerja Shinee Tools. Versi terbaru akan ditampilkan
+            pada halaman ini.
+        </p>
+    </section>
+
+    <section>
+        <h2 class="h5 fw-semibold">5. Kontak</h2>
+        <p>
+            Jika memiliki pertanyaan mengenai kebijakan privasi ini, silakan
+            hubungi kami melalui informasi kontak yang tersedia di situs,
+            jika ada.
+        </p>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h5 fw-semibold">6. Koneksi dan Keamanan</h2>
+        <p>
+            Saat ini, Shinee Tools masih menggunakan protokol HTTP
+            untuk mengakses situs. Koneksi HTTP tidak mengenkripsi
+            data yang dikirimkan antara peramban dan server, sehingga
+            informasi yang dikirimkan berpotensi disadap oleh pihak lain.
+        </p>
+        <p>
+            Oleh karena itu, pengguna disarankan untuk tidak memasukkan
+            informasi sensitif atau rahasia saat menggunakan layanan ini.
+            Kami berencana meningkatkan keamanan koneksi dengan
+            menerapkan HTTPS secepat nya.
+        </p>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+}

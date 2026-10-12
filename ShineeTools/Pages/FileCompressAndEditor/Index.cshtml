@@ -1,0 +1,88 @@
+@page "/file-compress-and-editor"
+
+@using ShineeTools.Core.Pages.FileCompressAndEditor
+
+@model IndexModel
+
+@{
+    ViewData["Title"] = "File Compress & Editor";
+}
+
+<div class="container py-5" style="margin-top: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <a asp-page="/Index" class="btn btn-link px-0 mb-3 d-inline-flex align-items-center gap-1">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Kembali
+            </a>
+
+            <h1 class="display-5 mb-4">File Compress &amp; Editor</h1>
+
+            <div class="card shadow-sm">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <i data-lucide="upload" style="width: 18px; height: 18px;"></i>
+                    <span class="card-title mb-0">Upload File</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-secondary">
+                        Pilih satu atau beberapa file, atau drag and drop ke area di bawah.
+                    </p>
+
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="fileInput">
+                            <i data-lucide="paperclip" style="width: 16px; height: 16px;"></i>
+                        </label>
+                        <input id="fileInput" type="file" class="form-control" multiple />
+                    </div>
+
+                    <div id="dropZone"
+                         class="border border-2 border-dashed rounded-3 p-4 text-center text-secondary">
+                        <i data-lucide="cloud-upload" class="mb-2" style="width: 32px; height: 32px;"></i>
+                        <div>Atau drop file di sini</div>
+                    </div>
+
+                    <ul id="fileList" class="list-group mt-3"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const fileInput = document.getElementById("fileInput");
+        const dropZone = document.getElementById("dropZone");
+        const fileList = document.getElementById("fileList");
+
+        function renderFiles(files) {
+            fileList.innerHTML = "";
+            Array.from(files).forEach(f => {
+                const li = document.createElement("li");
+                li.className = "list-group-item d-flex justify-content-between align-items-center";
+                li.innerHTML = `<span class="text-break"></span><span class="badge text-bg-secondary"></span>`;
+                li.children[0].textContent = f.name;
+                li.children[1].textContent = (f.size / 1024).toFixed(1) + " KB";
+                fileList.appendChild(li);
+            });
+        }
+
+        fileInput.addEventListener("change", () => renderFiles(fileInput.files));
+
+        ["dragenter", "dragover"].forEach(evt =>
+            dropZone.addEventListener(evt, e => {
+                e.preventDefault();
+                dropZone.classList.add("bg-body-secondary");
+            }));
+        ["dragleave", "drop"].forEach(evt =>
+            dropZone.addEventListener(evt, e => {
+                e.preventDefault();
+                dropZone.classList.remove("bg-body-secondary");
+            }));
+        dropZone.addEventListener("drop", e => {
+            fileInput.files = e.dataTransfer.files;
+            renderFiles(fileInput.files);
+        });
+    </script>
+}

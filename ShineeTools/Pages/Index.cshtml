@@ -1,0 +1,81 @@
+﻿@page
+
+@using ShineeTools.Core.Pages
+
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+
+    var myGithub = "https://github.com/Althaf671";
+}
+
+<div class="container py-5" style="margin-top: 50px;">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-semibold">My Toolbox</h1>
+        <p class="text-secondary">Pilih tool yang ingin kamu gunakan.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        @* QR Generator *@
+        <div class="col-12 col-md-6 col-lg-4">
+            <a asp-page="/QrGenerator/Index" class="text-decoration-none">
+                <div class="card h-100 shadow-sm border-1">
+                    <div class="card-body text-center p-4">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary mb-3"
+                              style="width: 64px; height: 64px;">
+                            <i data-lucide="qr-code" style="width: 32px; height: 32px;"></i>
+                        </span>
+                        <h2 class="h5 card-title text-body">QR Code Generator</h2>
+                        <p class="card-text text-secondary">
+                            Buat QR Code dengan logo dari URL dan unduh hasilnya sebagai PNG.
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-center pb-4">
+                        <span class="btn btn-primary">
+                            Buka <i data-lucide="arrow-right" class="ms-1" style="width: 16px; height: 16px;"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        @* File Compress and Editor *@
+        <div class="col-12 col-md-6 col-lg-4">
+            <a asp-page="/FileCompressAndEditor/Index" class="text-decoration-none">
+                <div class="card h-100 shadow-sm border-1">
+                    <div class="card-body text-center p-4">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary mb-3"
+                              style="width: 64px; height: 64px;">
+                            <i data-lucide="file-archive" style="width: 32px; height: 32px;"></i>
+                        </span>
+                        <h2 class="h5 card-title text-body">File Compress &amp; Editor</h2>
+                        <p class="card-text text-secondary">
+                            Upload, kompres, dan edit file kamu di sini.
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-center pb-4">
+                        <span class="btn btn-primary">
+                            Buka <i data-lucide="arrow-right" class="ms-1" style="width: 16px; height: 16px;"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="d-flex flex-column text-center text-secondary small mt-5 mb-0 gap-0">
+            <p>
+                Made with ASP.NET &bull; Bootstrap 5 &bull; jQuery &bull; QR Code &bull; SkiaSharp
+            </p>
+            <p>
+                Developed by <a href="@myGithub" target="_blank">Althaf</a> whilst listening to AOT soundtracks
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+}

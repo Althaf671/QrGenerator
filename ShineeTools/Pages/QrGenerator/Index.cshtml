@@ -1,0 +1,207 @@
+@page "qr-generator"
+
+@using ShineeTools.Core.Pages.QrGenerator
+@using ShineeTools.Core.Enums
+
+@model IndexModel
+
+@{
+    ViewData["Title"] = "QR Code Generator";
+}
+
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-8">
+
+            <a asp-page="/Index"
+               class="btn btn-link px-0 mb-3 d-inline-flex align-items-center gap-1">
+                <i data-lucide="arrow-left"
+                   style="width: 16px; height: 16px;"></i>
+                Kembali
+            </a>
+
+            <h1 class="display-4 mb-4">QR Code Generator</h1>
+
+            <form method="post" enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label asp-for="Input.Url" class="form-label"></label>
+
+                    <input asp-for="Input.Url"
+                           class="form-control shadow-sm"
+                           type="url"
+                           placeholder="https://google.com" />
+
+                    <span asp-validation-for="Input.Url"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Style" class="form-label">
+                        Gaya QR Code
+                    </label>
+
+                    <select asp-for="Input.Style"
+                            asp-items="Html.GetEnumSelectList<QrCodeStyle>()"
+                            class="form-select shadow-sm">
+                    </select>
+
+                    <span asp-validation-for="Input.Style"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="shadow-sm mb-3">
+                    <div class="card-body">
+                        <p class="mb-3">
+                            Masukan Logo 
+                            (Format PNG, JPG, JPEG, atau WebP. Maksimal 2 MB)
+                        </p>
+
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i data-lucide="paperclip"
+                                   style="width: 16px; height: 16px;"></i>
+                            </span>
+
+                            <input asp-for="Input.Logo"
+                                   id="fileInput"
+                                   type="file"
+                                   class="form-control"
+                                   accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
+                        </div>
+
+                        <span asp-validation-for="Input.Logo"
+                              class="text-danger"></span>
+
+                        <div id="fileInfo"
+                             class="d-none mt-3 p-2 border rounded align-items-center justify-content-between gap-2">
+                            <div class="d-flex align-items-center gap-2 text-truncate">
+                                <i data-lucide="file-image"
+                                   style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+
+                                <div class="text-truncate">
+                                    <div id="fileName"
+                                         class="text-truncate fw-medium"></div>
+
+                                    <small id="fileSize"
+                                           class="text-secondary"></small>
+                                </div>
+                            </div>
+
+                            <button id="removeFile"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger flex-shrink-0">
+                                <i data-lucide="x"
+                                   style="width: 14px; height: 14px;"></i>
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit"
+                            asp-page-handler="Generate"
+                            class="btn btn-primary">
+                        <i data-lucide="qr-code"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Generate QR Code
+                    </button>
+
+                    <button type="button"
+                            id="downloadQr"
+                            class="btn btn-outline-primary"
+                            disabled>
+                        <i data-lucide="download"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Download PNG
+                    </button>
+                </div>
+            </form>
+
+            @if (Model.QrCodeDataUrl is not null)
+            {
+                <div class="mt-5 text-center">
+                    <h2 class="h5 mb-3">Hasil QR Code</h2>
+
+                    <img id="qrCodeImage"
+                         src="@Model.QrCodeDataUrl"
+                         alt="Kode QR Anda"
+                         data-filename="@Model.Input.Url"
+                         class="img-fluid border rounded p-3"
+                         style="max-width: 300px;" />
+
+                    <p class="text-secondary mt-3 text-break">
+                        @Model.Input.Url
+                    </p>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const fileInfo = document.getElementById("fileInfo");
+        const fileName = document.getElementById("fileName");
+        const fileSize = document.getElementById("fileSize");
+        const removeFile = document.getElementById("removeFile");
+        const downloadButton = document.getElementById("downloadQr");
+        const qrImage = document.getElementById("qrCodeImage");
+
+        function updateFileInfo() {
+            const file = fileInput.files?.[0];
+
+            if (!file) {
+                fileInfo.classList.add("d-none");
+                fileInfo.classList.remove("d-flex");
+                fileName.textContent = "";
+                fileSize.textContent = "";
+                return;
+            }
+
+            fileName.textContent = file.name;
+            fileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+
+            fileInfo.classList.remove("d-none");
+            fileInfo.classList.add("d-flex");
+        }
+
+        fileInput.addEventListener("change", updateFileInfo);
+
+        removeFile.addEventListener("click", () => {
+            fileInput.value = "";
+            updateFileInfo();
+        });
+
+        downloadButton.disabled = !qrImage;
+
+        downloadButton.addEventListener("click", () => {
+            const image = document.getElementById("qrCodeImage");
+
+            if (!image?.src) return;
+
+            const url = image.dataset.filename;
+            const hostname = new URL(url).hostname.replace(/^www\./, "");
+            const filename = `${hostname.replace(/\./g, "-")}-qr.png`;
+
+            const link = document.createElement("a");
+            link.href = image.src;
+            link.download = filename;
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        });
+
+        lucide.createIcons();
+    </script>
+}
