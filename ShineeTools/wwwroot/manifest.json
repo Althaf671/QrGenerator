@@ -1,0 +1,33 @@
+{
+  "id": "/",
+  "name": "ShineeTools",
+  "short_name": "ShineeTools",
+  "description": "Kumpulan alat online gratis untuk mengolah gambar, PDF, dan berbagai kebutuhan file langsung dari browser.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
+  "theme_color": "#0074e2",
+  "background_color": "#ffffff",
+  "categories": [
+    "utilities",
+    "productivity",
+    "photo"
+  ],
+    "icons": [
+    {
+        "src": "/icon.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any"
+    }
+    ],
+  "prefer_related_applications": false
+}

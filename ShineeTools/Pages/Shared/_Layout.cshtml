@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/QrGenerator.styles.css" asp-append-version="true" />
+    <link rel="manifest" href="~/manifest.json" />
+    <meta name="theme-color" content="#0074e2" />
+    <meta name="description" content="Kumpulan alat online gratis untuk mengolah gambar, PDF, dan berbagai kebutuhan file langsung dari browser." />
+
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -37,6 +42,16 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/service-worker.js")
+                    .catch(error => console.error(
+                        "Service Worker registration failed:", error
+                    ));
+            });
+        }
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

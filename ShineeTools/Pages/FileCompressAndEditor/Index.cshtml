@@ -1,88 +1,278 @@
 @page "/file-compress-and-editor"
 
-@using ShineeTools.Core.Pages.FileCompressAndEditor
-
-@model IndexModel
-
 @{
-    ViewData["Title"] = "File Compress & Editor";
+    ViewData["Title"] = "File Tools";
+
+    var categories = new[]
+    {
+        new
+        {
+            Name = "PDF Tools",
+            Description = "Konversi, kompres, dan kelola dokumen PDF.",
+            Icon = "file-text",
+            Tools = new[]
+            {
+                new { Name = "Image to PDF", Description = "Gabungkan gambar menjadi satu PDF.", Icon = "images", Accept = ".png,.jpg,.jpeg,.webp", Id = "image-to-pdf" },
+                new { Name = "Compress PDF", Description = "Kurangi ukuran file PDF.", Icon = "file-down", Accept = ".pdf", Id = "compress-pdf" },
+                new { Name = "Merge PDF", Description = "Gabungkan beberapa PDF.", Icon = "files", Accept = ".pdf", Id = "merge-pdf" },
+                new { Name = "Split PDF", Description = "Pisahkan halaman PDF.", Icon = "file-symlink", Accept = ".pdf", Id = "split-pdf" },
+                new { Name = "Rotate PDF", Description = "Putar halaman dokumen PDF.", Icon = "rotate-cw", Accept = ".pdf", Id = "rotate-pdf" },
+                new { Name = "View & Edit PDF Metadata", Description = "Lihat dan edit metadata PDF.", Icon = "file-text", Accept = ".pdf", Id = "pdf-metadata" }
+            }
+            // todo: add office to pdf tools nanti
+        },
+        new
+        {
+            Name = "Image Tools",
+            Description = "Konversi, kompres, dan kelola berbagai jenis gambar.",
+            Icon = "image",
+            Tools = new[]
+            {
+                new { Name = "Compress Gambar", Description = "Kurangi ukuran file gambar.", Icon = "file-down", Accept = ".jpg,.jpeg,.png,.webp", Id = "compress-image" },
+            }
+        },
+    };
 }
 
-<div class="container py-5" style="margin-top: 50px;">
+<div class="container py-5 mt-3">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <a asp-page="/Index" class="btn btn-link px-0 mb-3 d-inline-flex align-items-center gap-1">
-                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Kembali
+        <div class="col-md-10 col-lg-9">
+
+            <a asp-page="/Index"
+               class="btn btn-link text-decoration-none px-0 mb-4 d-inline-flex align-items-center gap-2">
+                <i data-lucide="arrow-left"
+                   style="width:18px;height:18px"></i>
+                Kembali
             </a>
 
-            <h1 class="display-5 mb-4">File Compress &amp; Editor</h1>
+            <header class="mb-4">
+                <h1 class="h2 fw-semibold mb-2">File Tools</h1>
+                <p class="text-secondary mb-0">
+                    Semua kebutuhan konversi dan pengelolaan file dalam satu tempat.
+                </p>
+            </header>
 
-            <div class="card shadow-sm">
-                <div class="card-header d-flex align-items-center gap-2">
-                    <i data-lucide="upload" style="width: 18px; height: 18px;"></i>
-                    <span class="card-title mb-0">Upload File</span>
-                </div>
+            <div class="card mb-4">
                 <div class="card-body">
-                    <p class="text-secondary">
-                        Pilih satu atau beberapa file, atau drag and drop ke area di bawah.
-                    </p>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-8">
+                            <label for="toolSearch" class="form-label">
+                                Cari tools
+                            </label>
 
-                    <div class="input-group mb-3">
-                        <label class="input-group-text" for="fileInput">
-                            <i data-lucide="paperclip" style="width: 16px; height: 16px;"></i>
-                        </label>
-                        <input id="fileInput" type="file" class="form-control" multiple />
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i data-lucide="search"
+                                       style="width:18px;height:18px"></i>
+                                </span>
+
+                                <input id="toolSearch"
+                                       type="search"
+                                       class="form-control"
+                                       placeholder="Misalnya Compress PDF"
+                                       autocomplete="off" />
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="categoryFilter" class="form-label">
+                                Kategori
+                            </label>
+
+                            <select id="categoryFilter" class="form-select">
+                                <option value="">Semua kategori</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Name">
+                                        @category.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
                     </div>
-
-                    <div id="dropZone"
-                         class="border border-2 border-dashed rounded-3 p-4 text-center text-secondary">
-                        <i data-lucide="cloud-upload" class="mb-2" style="width: 32px; height: 32px;"></i>
-                        <div>Atau drop file di sini</div>
-                    </div>
-
-                    <ul id="fileList" class="list-group mt-3"></ul>
                 </div>
             </div>
+
+            <div id="toolCategories">
+                @foreach (var category in categories)
+                {
+                    <section class="tool-category mb-4"
+                             data-category="@category.Name">
+
+                        <div class="card mb-3">
+                            <div class="card-header d-flex align-items-center gap-3 py-3">
+                                <div class="border rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                     style="width:42px;height:42px">
+                                    <i data-lucide="@category.Icon"
+                                       style="width:22px;height:22px"></i>
+                                </div>
+
+                                <div>
+                                    <h2 class="h5 fw-semibold mb-1">
+                                        @category.Name
+                                    </h2>
+
+                                    <p class="text-secondary mb-0">
+                                        @category.Description
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    @foreach (var tool in category.Tools)
+                                    {
+                                        <div class="col-12 col-md-6 tool-item"
+                                             data-tool-name="@tool.Name"
+                                             data-tool-description="@tool.Description">
+
+                                            <button type="button"
+                                                    class="card tool-card h-100 w-100 text-start"
+                                                    data-tool="@tool.Id"
+                                                    data-accept="@tool.Accept">
+
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                                        <i data-lucide="@tool.Icon"
+                                                           class="text-secondary"
+                                                           style="width:21px;height:21px"></i>
+
+                                                        <i data-lucide="arrow-up-right"
+                                                           class="text-secondary"
+                                                           style="width:18px;height:18px"></i>
+                                                    </div>
+
+                                                    <h3 class="h6 fw-semibold mb-2">
+                                                        @tool.Name
+                                                    </h3>
+
+                                                    <p class="text-secondary mb-0">
+                                                        @tool.Description
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+            </div>
+
+            <div id="emptyState" class="card d-none">
+                <div class="card-body text-center py-5">
+                    <i data-lucide="search-x"
+                       class="text-secondary mb-3"
+                       style="width:30px;height:30px"></i>
+
+                    <h2 class="h5 fw-semibold">Tool tidak ditemukan</h2>
+                    <p class="text-secondary mb-0">
+                        Coba kata kunci atau kategori lainnya.
+                    </p>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
+<style>
+    .tool-card {
+        color: var(--bs-body-color);
+        background: var(--bs-body-bg);
+        border-color: var(--bs-border-color);
+        transition: border-color .15s ease, background-color .15s ease;
+    }
+
+    .tool-card:focus-visible {
+        outline: 2px solid var(--bs-primary);
+        outline-offset: 2px;
+    }
+
+    .tool-card p {
+        line-height: 1.5;
+    }
+</style>
+
 @section Scripts {
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
     <script>
-        lucide.createIcons();
+        const searchInput = document.getElementById("toolSearch");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const sections = [...document.querySelectorAll(".tool-category")];
+        const emptyState = document.getElementById("emptyState");
 
-        const fileInput = document.getElementById("fileInput");
-        const dropZone = document.getElementById("dropZone");
-        const fileList = document.getElementById("fileList");
+        function filterTools() {
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedCategory = categoryFilter.value;
+            let totalVisible = 0;
 
-        function renderFiles(files) {
-            fileList.innerHTML = "";
-            Array.from(files).forEach(f => {
-                const li = document.createElement("li");
-                li.className = "list-group-item d-flex justify-content-between align-items-center";
-                li.innerHTML = `<span class="text-break"></span><span class="badge text-bg-secondary"></span>`;
-                li.children[0].textContent = f.name;
-                li.children[1].textContent = (f.size / 1024).toFixed(1) + " KB";
-                fileList.appendChild(li);
+            sections.forEach(section => {
+                const categoryMatches =
+                    !selectedCategory ||
+                    section.dataset.category === selectedCategory;
+
+                let sectionVisible = 0;
+
+                section.querySelectorAll(".tool-item").forEach(item => {
+                    const name = item.dataset.toolName.toLowerCase();
+                    const description =
+                        item.dataset.toolDescription.toLowerCase();
+
+                    const matchesSearch =
+                        !query ||
+                        name.includes(query) ||
+                        description.includes(query);
+
+                    const visible = categoryMatches && matchesSearch;
+
+                    item.classList.toggle("d-none", !visible);
+
+                    if (visible) {
+                        sectionVisible++;
+                        totalVisible++;
+                    }
+                });
+
+                section.classList.toggle(
+                    "d-none",
+                    sectionVisible === 0
+                );
             });
+
+            emptyState.classList.toggle("d-none", totalVisible > 0);
         }
 
-        fileInput.addEventListener("change", () => renderFiles(fileInput.files));
+        searchInput.addEventListener("input", filterTools);
+        categoryFilter.addEventListener("change", filterTools);
 
-        ["dragenter", "dragover"].forEach(evt =>
-            dropZone.addEventListener(evt, e => {
-                e.preventDefault();
-                dropZone.classList.add("bg-body-secondary");
-            }));
-        ["dragleave", "drop"].forEach(evt =>
-            dropZone.addEventListener(evt, e => {
-                e.preventDefault();
-                dropZone.classList.remove("bg-body-secondary");
-            }));
-        dropZone.addEventListener("drop", e => {
-            fileInput.files = e.dataTransfer.files;
-            renderFiles(fileInput.files);
+        document.querySelectorAll("[data-tool]").forEach(button => {
+            button.addEventListener("click", () => {
+                const routes = {
+                    "image-to-pdf": "/file-tools/image-to-pdf",
+                    "word-to-pdf": "/file-tools/word-to-pdf",
+                    "excel-to-pdf": "/file-tools/excel-to-pdf",
+                    "powerpoint-to-pdf": "/file-tools/powerpoint-to-pdf",
+                    "compress-pdf": "/file-tools/compress-pdf",
+                    "merge-pdf": "/file-tools/merge-pdf",
+                    "split-pdf": "/file-tools/split-pdf",
+                    "pdf-to-images": "/file-tools/pdf-to-images",
+                    "rotate-pdf": "/file-tools/rotate-pdf",
+                    "extract-pdf-pages": "/file-tools/extract-pdf-pages",
+                    "pdf-metadata": "/file-tools/pdf-metadata",
+                    "compress-image": "/file-tools/compress-image"
+                };
+
+                const route = routes[button.dataset.tool];
+
+                if (route) {
+                    window.location.href = route;
+                }
+            });
         });
+
+        lucide.createIcons();
     </script>
 }

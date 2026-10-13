@@ -1,0 +1,318 @@
+@page "/file-tools/image-to-pdf"
+
+@{
+    ViewData["Title"] = "Image to PDF - Ubah Gambar jadi PDF Online";
+    ViewData["Description"] = "Convert JPG, PNG, dan WebP menjadi PDF secara langsung di browser. Atur ukuran kertas, orientasi, margin, dan urutan gambar tanpa mengunggah file ke server.";
+}
+
+@section Head {
+    <meta name="description" content="@ViewData["Description"]" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://shinee.my.id/file-tools/image-to-pdf" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ShineeTools" />
+    <meta property="og:title" content="Image to PDF - ShineeTools" />
+    <meta property="og:description" content="Convert JPG, PNG, dan WebP menjadi PDF secara gratis langsung di browser." />
+    <meta property="og:url" content="https://shinee.my.id/file-tools/image-to-pdf" />
+    <meta property="og:image" content="https://shinee.my.id/images/og/image-to-pdf.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Image to PDF - ShineeTools" />
+    <meta name="twitter:description" content="Ubah gambar menjadi PDF secara gratis langsung di browser." />
+    <meta name="twitter:image" content="https://shinee.my.id/images/og/image-to-pdf.png" />
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9 col-xl-8">
+
+            <a asp-page="/FileCompressAndEditor/Index"
+               class="text-primary text-decoration-none d-inline-flex align-items-center gap-2 mb-4">
+                <i data-lucide="arrow-left"
+                   style="width: 18px; height: 18px;"></i>
+                Kembali ke File Tools
+            </a>
+
+            <header class="mb-4">
+                <h1 class="h2 fw-semibold mb-2">Image to PDF</h1>
+
+                <p class="text-secondary mb-0">
+                    Gabungkan gambar JPG, PNG, dan WebP menjadi satu dokumen PDF.
+                    Atur halaman sesuai kebutuhan dan unduh.
+                </p>
+            </header>
+
+            <form id="imageToPdfForm">
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="images"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pilih Gambar
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-3">
+                            Pilih satu atau beberapa gambar. Setiap gambar
+                            akan ditempatkan pada halaman tersendiri di dalam 1 file PDF.
+                        </p>
+
+                        <label for="imageFiles" class="form-label">
+                            File gambar
+                        </label>
+
+                        <input id="imageFiles"
+                               name="imageFiles"
+                               type="file"
+                               class="form-control"
+                               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                               multiple />
+
+                        <div class="form-text">
+                            Format JPG, JPEG, PNG, dan WebP.
+                            Maksimal 20 gambar, masing-masing 10 MB.
+                        </div>
+
+                        <div id="imageStatus"
+                             class="alert d-none mt-3 mb-0"
+                             role="status"
+                             aria-live="polite"></div>
+
+                        <div id="imagePreviewSection" class="d-none mt-4">
+                            <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+                                <h3 class="h6 fw-semibold mb-0">
+                                    Daftar Gambar
+                                </h3>
+
+                                <button id="clearImages"
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger">
+                                    <i data-lucide="trash-2"
+                                       class="me-1"
+                                       style="width: 15px; height: 15px;"></i>
+                                    Hapus Semua
+                                </button>
+                            </div>
+
+                            <div id="imageList" class="d-grid gap-2"></div>
+
+                            <p class="text-secondary small mt-3 mb-0">
+                                Urutan gambar menentukan urutan halaman PDF.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="settings-2"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pengaturan PDF
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-4">
+                            Sesuaikan ukuran halaman dan penempatan gambar
+                            sebelum membuat dokumen PDF.
+                        </p>
+
+                        <div class="row g-3 align-items-start mb-4">
+                            <label for="paperSize"
+                                   class="col-12 col-md-4 col-form-label">
+                                Ukuran kertas
+                            </label>
+
+                            <div class="col-12 col-md-8">
+                                <select id="paperSize" class="form-select">
+                                    <option value="a4" selected>A4</option>
+                                    <option value="letter">Letter</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-start mb-4">
+                            <label for="orientation"
+                                   class="col-12 col-md-4 col-form-label">
+                                Orientasi halaman
+                            </label>
+
+                            <div class="col-12 col-md-8">
+                                <select id="orientation" class="form-select">
+                                    <option value="portrait" selected>
+                                        Portrait
+                                    </option>
+                                    <option value="landscape">
+                                        Landscape
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-start">
+                            <label for="margin"
+                                   class="col-12 col-md-4 col-form-label">
+                                Margin halaman
+                            </label>
+
+                            <div class="col-12 col-md-8">
+                                <select id="margin" class="form-select">
+                                    <option value="0">Tanpa margin</option>
+                                    <option value="5" selected>5 mm</option>
+                                    <option value="10">10 mm</option>
+                                    <option value="15">15 mm</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-output"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pengaturan Hasil
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="outputFilename" class="form-label">
+                                Nama file hasil
+                            </label>
+
+                            <div class="input-group">
+                                <input id="outputFilename"
+                                       name="outputFilename"
+                                       type="text"
+                                       class="form-control"
+                                       value="images-to-pdf"
+                                       maxlength="100"
+                                       placeholder="images-to-pdf" />
+
+                                <span class="input-group-text">.pdf</span>
+                            </div>
+
+                            <div class="form-text mt-3">
+                                Ekstensi PDF akan ditambahkan secara otomatis.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            Ringkasan Dokumen
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Jumlah gambar</span>
+                            <span id="imageCount" class="fw-medium">0 gambar</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Ukuran kertas</span>
+                            <span id="paperSummary" class="fw-medium">A4</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Orientasi</span>
+                            <span id="orientationSummary" class="fw-medium">
+                                Portrait
+                            </span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Margin</span>
+                            <span id="marginSummary" class="fw-medium">5 mm</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="generatePdf"
+                            type="submit"
+                            class="btn btn-primary"
+                            disabled>
+                        <i data-lucide="file-check"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Generate PDF
+                    </button>
+
+                    <button id="resetForm"
+                            type="button"
+                            class="btn btn-outline-secondary">
+                        <i data-lucide="rotate-ccw"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+            <section class="mt-5">
+                <h2 class="h5 fw-semibold mb-3">
+                    Cara Mengubah Gambar Menjadi PDF
+                </h2>
+
+                <ol class="ps-3 mb-4">
+                    <li class="mb-2">
+                        <strong>Pilih gambar.</strong>
+                        Tambahkan satu atau beberapa file JPG, PNG, atau WebP.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Atur halaman.</strong>
+                        Pilih ukuran kertas, orientasi, dan margin PDF.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Buat PDF.</strong>
+                        Tekan tombol Generate PDF untuk memproses gambar.
+                    </li>
+                    <li>
+                        <strong>Unduh dokumen.</strong>
+                        Simpan PDF yang dihasilkan ke perangkatmu.
+                    </li>
+                </ol>
+
+                <h2 class="h5 fw-semibold mb-3">
+                    Apakah File Saya Aman?
+                </h2>
+
+                <p class="text-secondary mb-0">
+                    Pemrosesan berlangsung langsung di browser.
+                    Gambar tidak perlu diunggah ke server untuk dikonversi.
+                </p>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="~/js/pdf-tools-scripts/image-to-pdf.js"
+            asp-append-version="true"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+}

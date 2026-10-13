@@ -1,0 +1,338 @@
+@page "/file-tools/rotate-pdf"
+
+@{
+    ViewData["Title"] = "Rotate PDF - Putar Halaman PDF Online";
+    ViewData["Description"] = "Putar halaman PDF satu per satu atau sekaligus. Preview dan proses dokumen langsung di browser tanpa mengunggah file ke server.";
+}
+
+@section Head {
+    <meta name="description" content="@ViewData["Description"]" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://shinee.my.id/file-tools/rotate-pdf" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ShineeTools" />
+    <meta property="og:title" content="Rotate PDF - ShineeTools" />
+    <meta property="og:description" content="Putar halaman PDF dan unduh dokumen yang sudah diperbaiki orientasinya." />
+    <meta property="og:url" content="https://shinee.my.id/file-tools/rotate-pdf" />
+    <meta property="og:image" content="https://shinee.my.id/images/og/rotate-pdf.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rotate PDF - ShineeTools" />
+    <meta name="twitter:description" content="Putar satu atau beberapa halaman PDF secara gratis langsung di browser." />
+    <meta name="twitter:image" content="https://shinee.my.id/images/og/rotate-pdf.png" />
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-9">
+
+            <a asp-page="/FileCompressAndEditor/Index"
+               class="text-primary text-decoration-none d-inline-flex align-items-center gap-2 mb-4">
+                <i data-lucide="arrow-left"
+                   style="width: 18px; height: 18px;"></i>
+                Kembali ke File Tools
+            </a>
+
+            <header class="mb-4">
+                <h1 class="h2 fw-semibold mb-2">Rotate PDF</h1>
+                <p class="text-secondary mb-0">
+                    Putar halaman PDF sesuai kebutuhan dengan preview
+                    sebelum menyimpan dokumen.
+                </p>
+            </header>
+
+            <form id="rotatePdfForm">
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-up"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pilih File PDF
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <label for="pdfFile" class="form-label">File PDF</label>
+
+                        <input id="pdfFile"
+                               name="pdfFile"
+                               type="file"
+                               class="form-control"
+                               accept=".pdf,application/pdf" />
+
+                        <div class="form-text">
+                            Format PDF saja. Maksimal 25 MB per file.
+                        </div>
+
+                        <div id="pdfStatus"
+                             class="alert d-none mt-3 mb-0"
+                             role="status"
+                             aria-live="polite"></div>
+
+                        <div id="pdfInfoSection" class="d-none mt-4">
+                            <h3 class="h6 fw-semibold mb-3">
+                                Informasi Dokumen
+                            </h3>
+
+                            <div class="border rounded p-3">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="flex-shrink-0 d-flex align-items-center justify-content-center bg-body-secondary rounded p-2">
+                                        <i data-lucide="file-text"
+                                           style="width: 22px; height: 22px;"></i>
+                                    </div>
+
+                                    <div class="min-w-0">
+                                        <p id="pdfFileName"
+                                           class="fw-medium text-break mb-1"></p>
+                                        <p class="text-secondary small mb-0">
+                                            <span id="pdfPageCount">0 halaman</span>
+                                            <span class="mx-1">·</span>
+                                            <span id="pdfFileSize">0 B</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <div class="d-flex align-items-center justify-content-between gap-2">
+                            <h2 class="h6 fw-semibold mb-0">
+                                <i data-lucide="rotate-cw"
+                                   class="me-2"
+                                   style="width: 18px; height: 18px;"></i>
+                                Preview dan Rotasi
+                            </h2>
+
+                            <span id="selectionCount"
+                                  class="badge text-bg-secondary">0 dipilih</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button id="selectAllPages"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    disabled>
+                                Pilih semua
+                            </button>
+
+                            <button id="deselectAllPages"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    disabled>
+                                Hapus pilihan
+                            </button>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <button id="rotateSelectedLeft"
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    disabled>
+                                <i data-lucide="rotate-ccw"
+                                   class="me-1"
+                                   style="width: 18px; height: 18px;"></i>
+                                Putar kiri 90°
+                            </button>
+
+                            <button id="rotateSelectedRight"
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    disabled>
+                                <i data-lucide="rotate-cw"
+                                   class="me-1"
+                                   style="width: 18px; height: 18px;"></i>
+                                Putar kanan 90°
+                            </button>
+
+                            <button id="resetPageRotations"
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    disabled>
+                                <i data-lucide="undo-2"
+                                   class="me-1"
+                                   style="width: 18px; height: 18px;"></i>
+                                Reset rotasi
+                            </button>
+                        </div>
+
+                        <div id="previewEmpty"
+                             class="border rounded p-5 text-center text-secondary">
+                            <i data-lucide="file-image"
+                               style="width: 36px; height: 36px;"></i>
+                            <p class="fw-medium mt-3 mb-1">
+                                Belum ada dokumen
+                            </p>
+                            <p class="small mb-0">
+                                Pilih PDF untuk melihat preview setiap halaman.
+                            </p>
+                        </div>
+
+                        <div id="previewLoading"
+                             class="d-none text-center py-4"
+                             role="status">
+                            <div class="spinner-border spinner-border-sm"
+                                 aria-hidden="true"></div>
+                            <p class="text-secondary small mt-2 mb-0">
+                                Memuat preview halaman...
+                            </p>
+                        </div>
+
+                        <div id="pagePreviewGrid"
+                             class="row g-3"
+                             aria-label="Preview halaman PDF"></div>
+
+                        <p class="text-secondary small mt-3 mb-0">
+                            Pilih halaman melalui kotak centang. Rotasi preview
+                            tidak mengubah file sumber sampai kamu mengunduh hasil.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-output"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pengaturan Hasil
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <label for="outputFilename" class="form-label">
+                            Nama file hasil
+                        </label>
+
+                        <div class="input-group">
+                            <input id="outputFilename"
+                                   type="text"
+                                   class="form-control"
+                                   value="rotated-document"
+                                   maxlength="100"
+                                   placeholder="rotated-document" />
+                            <span class="input-group-text">.pdf</span>
+                        </div>
+
+                        <div class="form-text">
+                            Ekstensi PDF ditambahkan secara otomatis.
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            Ringkasan Dokumen
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Jumlah halaman</span>
+                            <span id="summaryPageCount" class="fw-medium">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Halaman yang dipilih</span>
+                            <span id="summarySelectedPages" class="fw-medium">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Halaman yang dirotasi</span>
+                            <span id="summaryRotatedPages" class="fw-medium">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Status</span>
+                            <span id="summaryReadyStatus" class="fw-medium">
+                                Belum siap
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="saveRotatedPdf"
+                            type="submit"
+                            class="btn btn-primary"
+                            disabled>
+                        <i data-lucide="download"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Download PDF
+                    </button>
+
+                    <button id="resetRotatePdf"
+                            type="button"
+                            class="btn btn-outline-secondary">
+                        <i data-lucide="rotate-ccw"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+            <section class="mt-5">
+                <h2 class="h5 fw-semibold mb-3">
+                    Cara Memutar File PDF
+                </h2>
+
+                <ol class="ps-3 mb-4">
+                    <li class="mb-2">
+                        <strong>Pilih file PDF.</strong>
+                        Dokumen akan dibaca langsung di browser.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Pilih halaman.</strong>
+                        Centang halaman yang ingin diputar atau pilih semuanya.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Atur rotasi.</strong>
+                        Putar halaman 90° ke kiri atau ke kanan.
+                    </li>
+                    <li>
+                        <strong>Download hasil.</strong>
+                        Simpan dokumen setelah memeriksa preview.
+                    </li>
+                </ol>
+
+                <h2 class="h5 fw-semibold mb-3">
+                    Apakah File Saya Aman?
+                </h2>
+
+                <p class="text-secondary mb-0">
+                    PDF diproses langsung di browser menggunakan JavaScript.
+                    File tidak perlu diunggah ke server. Dokumen yang dilindungi
+                    kata sandi mungkin tidak dapat dibuka.
+                </p>
+            </section>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="~/js/pdf-tools-scripts/rotate-pdf.js"
+            asp-append-version="true"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+}

@@ -1,0 +1,535 @@
+@page "/file-tools/pdf-metadata"
+
+@{
+    ViewData["Title"] = "PDF Metadata Viewer & Editor";
+    ViewData["Description"] = "Lihat dan edit metadata PDF seperti judul, penulis, subjek, kata kunci, tanggal, dan informasi dokumen lainnya secara langsung di browser.";
+}
+
+@section Head {
+    <meta name="description" content="@ViewData["Description"]" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://shinee.my.id/file-tools/pdf-metadata" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ShineeTools" />
+    <meta property="og:title" content="PDF Metadata Viewer & Editor - ShineeTools" />
+    <meta property="og:description" content="Lihat dan edit metadata PDF secara gratis langsung di browser." />
+    <meta property="og:url" content="https://shinee.my.id/file-tools/pdf-metadata" />
+    <meta property="og:image" content="https://shinee.my.id/images/og/pdf-metadata.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PDF Metadata Viewer & Editor - ShineeTools" />
+    <meta name="twitter:description" content="Lihat dan edit metadata dokumen PDF langsung di browser." />
+    <meta name="twitter:image" content="https://shinee.my.id/images/og/pdf-metadata.png" />
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9 col-xl-8">
+
+            <a asp-page="/FileCompressAndEditor/Index"
+               class="text-primary text-decoration-none d-inline-flex align-items-center gap-2 mb-4">
+                <i data-lucide="arrow-left"
+                   style="width: 18px; height: 18px;"></i>
+                Kembali ke File Tools
+            </a>
+
+            <header class="mb-4">
+                <h1 class="h2 fw-semibold mb-2">
+                    PDF Metadata Viewer &amp; Editor
+                </h1>
+
+                <p class="text-secondary mb-0">
+                    Lihat informasi internal dokumen PDF, edit metadata yang
+                    didukung, lalu unduh dokumen dengan perubahan yang diterapkan.
+                </p>
+            </header>
+
+            <form id="pdfMetadataForm">
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-up"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pilih File PDF
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-3">
+                            Pilih satu dokumen PDF untuk membaca metadata
+                            dan informasi teknisnya.
+                        </p>
+
+                        <label for="pdfFile" class="form-label">
+                            File PDF
+                        </label>
+
+                        <input id="pdfFile"
+                               name="pdfFile"
+                               type="file"
+                               class="form-control"
+                               accept=".pdf,application/pdf" />
+
+                        <div class="form-text">
+                            Format PDF saja. Maksimal 25 MB per file.
+                        </div>
+
+                        <div id="pdfStatus"
+                             class="alert d-none mt-3 mb-0"
+                             role="status"
+                             aria-live="polite"></div>
+
+                        <div id="pdfInfoSection" class="d-none mt-4">
+                            <h3 class="h6 fw-semibold mb-3">
+                                Informasi Dokumen
+                            </h3>
+
+                            <div class="border rounded p-3">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="flex-shrink-0 d-flex align-items-center justify-content-center bg-body-secondary rounded p-2">
+                                        <i data-lucide="file-text"
+                                           style="width: 22px; height: 22px;"></i>
+                                    </div>
+
+                                    <div class="min-w-0">
+                                        <p id="pdfFileName"
+                                           class="fw-medium text-break mb-1"></p>
+
+                                        <p class="text-secondary small mb-0">
+                                            <span id="pdfPageCount">- halaman</span>
+                                            <span class="mx-1">·</span>
+                                            <span id="pdfFileSize">0 B</span>
+                                        </p>
+
+                                        <p id="pdfVersion"
+                                           class="text-secondary small mb-0 mt-1">
+                                            Versi PDF: -
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-pen"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Metadata Dokumen
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-4">
+                            Informasi berikut berasal dari metadata standar PDF.
+                            Field yang kosong berarti metadata tersebut tidak
+                            tersedia atau tidak memiliki nilai.
+                        </p>
+
+                        <div class="mb-3">
+                            <label for="metadataTitle" class="form-label">
+                                Judul
+                            </label>
+
+                            <input id="metadataTitle"
+                                   name="metadataTitle"
+                                   type="text"
+                                   class="form-control"
+                                   maxlength="1000"
+                                   placeholder="Judul dokumen" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataAuthor" class="form-label">
+                                Penulis
+                            </label>
+
+                            <input id="metadataAuthor"
+                                   name="metadataAuthor"
+                                   type="text"
+                                   class="form-control"
+                                   maxlength="1000"
+                                   placeholder="Nama penulis" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataSubject" class="form-label">
+                                Subjek
+                            </label>
+
+                            <input id="metadataSubject"
+                                   name="metadataSubject"
+                                   type="text"
+                                   class="form-control"
+                                   maxlength="1000"
+                                   placeholder="Subjek dokumen" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataKeywords" class="form-label">
+                                Kata kunci
+                            </label>
+
+                            <textarea id="metadataKeywords"
+                                      name="metadataKeywords"
+                                      class="form-control"
+                                      rows="2"
+                                      maxlength="4000"
+                                      placeholder="Contoh: laporan, penelitian, dokumentasi"></textarea>
+
+                            <div class="form-text">
+                                Pisahkan kata kunci menggunakan koma.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataCreator" class="form-label">
+                                Creator
+                            </label>
+
+                            <input id="metadataCreator"
+                                   name="metadataCreator"
+                                   type="text"
+                                   class="form-control"
+                                   maxlength="1000"
+                                   placeholder="Aplikasi pembuat dokumen" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataProducer" class="form-label">
+                                Producer
+                            </label>
+
+                            <input id="metadataProducer"
+                                   name="metadataProducer"
+                                   type="text"
+                                   class="form-control"
+                                   maxlength="1000"
+                                   placeholder="Aplikasi atau library pembuat PDF" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataCreationDate" class="form-label">
+                                Tanggal dibuat
+                            </label>
+
+                            <input id="metadataCreationDate"
+                                   name="metadataCreationDate"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Tidak tersedia"
+                                   autocomplete="off" />
+
+                            <div class="form-text">
+                                Format tanggal mengikuti informasi yang
+                                tersedia pada dokumen sumber.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metadataModificationDate" class="form-label">
+                                Tanggal modifikasi
+                            </label>
+
+                            <input id="metadataModificationDate"
+                                   name="metadataModificationDate"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Tidak tersedia"
+                                   autocomplete="off" />
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="database"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Metadata Teknis
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-4">
+                            Informasi teknis dibaca dari struktur dokumen.
+                            Tidak semua informasi tersedia pada setiap PDF.
+                        </p>
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Versi PDF</span>
+                            <span id="technicalVersion" class="fw-medium text-end">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Jumlah halaman</span>
+                            <span id="technicalPageCount" class="fw-medium text-end">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Ukuran file</span>
+                            <span id="technicalFileSize" class="fw-medium text-end">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Status enkripsi</span>
+                            <span id="technicalEncryption" class="fw-medium text-end">Tidak diketahui</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Formulir interaktif</span>
+                            <span id="technicalForms" class="fw-medium text-end">Tidak diketahui</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">JavaScript PDF</span>
+                            <span id="technicalJavaScript" class="fw-medium text-end">Tidak diketahui</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">XMP metadata</span>
+                            <span id="technicalXmp" class="fw-medium text-end">Tidak diketahui</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Struktur linearized</span>
+                            <span id="technicalLinearized" class="fw-medium text-end">Tidak diketahui</span>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="rawMetadata" class="form-label">
+                                Metadata mentah
+                            </label>
+
+                            <textarea id="rawMetadata"
+                                      class="form-control font-monospace small"
+                                      rows="8"
+                                      readonly
+                                      placeholder="Metadata mentah akan ditampilkan setelah PDF dibaca."></textarea>
+
+                            <div class="form-text">
+                                Menampilkan representasi metadata yang berhasil
+                                dibaca oleh tool. Tidak menjamin seluruh objek
+                                internal PDF ditampilkan.
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="xmpMetadata" class="form-label">
+                                XMP metadata
+                            </label>
+
+                            <textarea id="xmpMetadata"
+                                      class="form-control font-monospace small"
+                                      rows="8"
+                                      readonly
+                                      placeholder="XMP metadata akan ditampilkan jika tersedia."></textarea>
+
+                            <div class="form-text">
+                                XMP adalah metadata berbasis XML yang dapat
+                                menyimpan informasi tambahan di luar field standar PDF.
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                <label for="jsonMetadata" class="form-label fw-medium mb-0">
+                                    View as JSON
+                                </label>
+
+                                <button id="copyJsonMetadata"
+                                        type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        disabled>
+                                    <i data-lucide="copy"
+                                    class="me-1"
+                                    style="width: 15px; height: 15px;"></i>
+                                    Salin JSON
+                                </button>
+                            </div>
+
+                            <textarea id="jsonMetadata"
+                                    class="form-control font-monospace small"
+                                    rows="12"
+                                    readonly
+                                    spellcheck="false"
+                                    placeholder="Metadata JSON akan ditampilkan setelah PDF dibaca."></textarea>
+
+                            <div class="form-text">
+                                Representasi JSON dari metadata dan informasi teknis yang berhasil
+                                dibaca. Informasi yang tidak tersedia akan ditampilkan sebagai null
+                                atau status yang sesuai.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-output"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pengaturan Hasil
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="outputFilename" class="form-label">
+                                Nama file hasil
+                            </label>
+
+                            <div class="input-group">
+                                <input id="outputFilename"
+                                       type="text"
+                                       class="form-control"
+                                       value="edited-document"
+                                       maxlength="100"
+                                       placeholder="edited-document" />
+
+                                <span class="input-group-text">.pdf</span>
+                            </div>
+
+                            <div class="form-text mt-3">
+                                Dokumen sumber tidak diubah. Perubahan metadata
+                                diterapkan ke salinan PDF yang akan diunduh.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            Ringkasan Dokumen
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Jumlah halaman</span>
+                            <span id="summaryPageCount" class="fw-medium">-</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Field metadata terisi</span>
+                            <span id="summaryMetadataCount" class="fw-medium">0 field</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Perubahan metadata</span>
+                            <span id="summaryChanges" class="fw-medium">Belum ada</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Status</span>
+                            <span id="summaryReadyStatus" class="fw-medium">
+                                Belum siap
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="saveMetadata"
+                            type="submit"
+                            class="btn btn-primary"
+                            disabled>
+                        <i data-lucide="save"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Simpan Metadata &amp; Unduh
+                    </button>
+
+                    <button id="resetMetadata"
+                            type="button"
+                            class="btn btn-outline-secondary">
+                        <i data-lucide="rotate-ccw"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+            <section class="mt-5">
+                <h2 class="h5 fw-semibold mb-3">
+                    Cara Melihat dan Mengedit Metadata PDF
+                </h2>
+
+                <ol class="ps-3 mb-4">
+                    <li class="mb-2">
+                        <strong>Pilih file PDF.</strong>
+                        Metadata dan informasi dokumen akan dibaca oleh browser.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Periksa metadata.</strong>
+                        Lihat informasi standar, metadata teknis, serta XMP
+                        jika tersedia.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Edit field yang didukung.</strong>
+                        Ubah judul, penulis, subjek, kata kunci, creator,
+                        producer, atau tanggal.
+                    </li>
+                    <li>
+                        <strong>Simpan dan unduh.</strong>
+                        Tool membuat salinan PDF dengan perubahan metadata
+                        yang didukung.
+                    </li>
+                </ol>
+
+                <h2 class="h5 fw-semibold mb-3">
+                    Apakah File Saya Aman?
+                </h2>
+
+                <p class="text-secondary mb-0">
+                    Pembacaan dan pengeditan metadata dirancang berlangsung
+                    langsung di browser. File tidak perlu dikirim ke server
+                    untuk diproses. Dukungan metadata bergantung pada struktur
+                    dan fitur dokumen PDF sumber.
+                </p>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="~/js/pdf-tools-scripts/pdf-metadata.js"
+            asp-append-version="true"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+}

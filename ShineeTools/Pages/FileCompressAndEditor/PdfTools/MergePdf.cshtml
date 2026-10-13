@@ -1,0 +1,246 @@
+@page "/file-tools/merge-pdf"
+
+@{
+    ViewData["Title"] = "Merge PDF - Gabungkan File PDF Online";
+    ViewData["Description"] = "Gabungkan beberapa file PDF menjadi satu dokumen. Atur urutan file dan proses PDF langsung di browser tanpa mengunggah dokumen ke server.";
+}
+
+@section Head {
+    <meta name="description" content="@ViewData["Description"]" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://shinee.my.id/file-tools/merge-pdf" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ShineeTools" />
+    <meta property="og:title" content="Merge PDF - ShineeTools" />
+    <meta property="og:description" content="Gabungkan beberapa file PDF menjadi satu dokumen secara gratis langsung di browser." />
+    <meta property="og:url" content="https://shinee.my.id/file-tools/merge-pdf" />
+    <meta property="og:image" content="https://shinee.my.id/images/og/merge-pdf.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Merge PDF - ShineeTools" />
+    <meta name="twitter:description" content="Gabungkan beberapa file PDF menjadi satu dokumen secara gratis." />
+    <meta name="twitter:image" content="https://shinee.my.id/images/og/merge-pdf.png" />
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9 col-xl-8">
+
+            <a asp-page="/FileCompressAndEditor/Index"
+               class="text-primary text-decoration-none d-inline-flex align-items-center gap-2 mb-4">
+                <i data-lucide="arrow-left"
+                   style="width: 18px; height: 18px;"></i>
+                Kembali ke File Tools
+            </a>
+
+            <header class="mb-4">
+                <h1 class="h2 fw-semibold mb-2">Merge PDF</h1>
+
+                <p class="text-secondary mb-0">
+                    Gabungkan beberapa file PDF menjadi satu dokumen.
+                    Tentukan urutan file, lalu unduh hasilnya secara gratis.
+                </p>
+            </header>
+
+            <form id="mergePdfForm">
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="files"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pilih File PDF
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-3">
+                            Pilih minimal dua file PDF untuk digabungkan.
+                        </p>
+
+                        <label for="pdfFiles" class="form-label">
+                            File PDF
+                        </label>
+
+                        <input id="pdfFiles"
+                               name="pdfFiles"
+                               type="file"
+                               class="form-control"
+                               accept=".pdf,application/pdf"
+                               multiple />
+
+                        <div class="form-text">
+                            Format PDF saja. Maksimal 20 file,
+                            masing-masing berukuran hingga 25 MB.
+                        </div>
+
+                        <div id="pdfStatus"
+                             class="alert d-none mt-3 mb-0"
+                             role="status"
+                             aria-live="polite"></div>
+
+                        <div id="pdfListSection" class="d-none mt-4">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                                <h3 class="h6 fw-semibold mb-0">
+                                    Urutan Dokumen
+                                </h3>
+
+                                <button id="clearPdfs"
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger">
+                                    <i data-lucide="trash-2"
+                                       class="me-1"
+                                       style="width: 15px; height: 15px;"></i>
+                                    Hapus Semua
+                                </button>
+                            </div>
+
+                            <div id="pdfList" class="d-grid gap-2"></div>
+
+                            <p class="text-secondary small mt-3 mb-0">
+                                Gunakan tombol panah untuk mengatur urutan
+                                dokumen dalam PDF hasil gabungan.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            <i data-lucide="file-output"
+                               class="me-2"
+                               style="width: 18px; height: 18px;"></i>
+                            Pengaturan Hasil
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="outputFilename"
+                                   class="form-label">
+                                Nama file hasil
+                            </label>
+
+                            <div class="input-group">
+                                <input id="outputFilename"
+                                       type="text"
+                                       class="form-control"
+                                       value="merged-document"
+                                       maxlength="100"
+                                       placeholder="merged-document" />
+
+                                <span class="input-group-text">.pdf</span>
+                            </div>
+
+                            <div class="form-text mt-3">
+                                Ekstensi PDF akan ditambahkan secara otomatis.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">
+                            Ringkasan Dokumen
+                        </h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Jumlah file</span>
+                            <span id="pdfCount" class="fw-medium">0 file</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Total ukuran file</span>
+                            <span id="pdfTotalSize" class="fw-medium">0 B</span>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                            <span class="text-secondary">Status</span>
+                            <span id="pdfReadyStatus" class="fw-medium">
+                                Belum siap
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="mergePdfs"
+                            type="submit"
+                            class="btn btn-primary"
+                            disabled>
+                        <i data-lucide="files"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Gabungkan PDF
+                    </button>
+
+                    <button id="resetMerge"
+                            type="button"
+                            class="btn btn-outline-secondary">
+                        <i data-lucide="rotate-ccw"
+                           class="me-1"
+                           style="width: 18px; height: 18px;"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+            <section class="mt-5">
+                <h2 class="h5 fw-semibold mb-3">
+                    Cara Menggabungkan File PDF
+                </h2>
+
+                <ol class="ps-3 mb-4">
+                    <li class="mb-2">
+                        <strong>Pilih file PDF.</strong>
+                        Tambahkan minimal dua dokumen yang ingin digabungkan.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Atur urutan dokumen.</strong>
+                        Pindahkan file ke atas atau ke bawah sesuai kebutuhan.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Tentukan nama hasil.</strong>
+                        Masukkan nama file PDF yang akan diunduh.
+                    </li>
+                    <li>
+                        <strong>Gabungkan dan unduh.</strong>
+                        Tekan tombol Gabungkan PDF untuk membuat dokumen baru.
+                    </li>
+                </ol>
+
+                <h2 class="h5 fw-semibold mb-3">
+                    Apakah File Saya Aman?
+                </h2>
+
+                <p class="text-secondary mb-0">
+                    Penggabungan dirancang berlangsung langsung di browser
+                    menggunakan pemrosesan JavaScript. Dokumen tidak perlu
+                    dikirim ke server untuk digabungkan.
+                </p>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="~/js/pdf-tools-scripts/merge-pdf.js"
+            asp-append-version="true"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+}

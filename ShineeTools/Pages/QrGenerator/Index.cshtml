@@ -1,4 +1,4 @@
-@page "qr-generator"
+@page "/qr-generator"
 
 @using ShineeTools.Core.Pages.QrGenerator
 @using ShineeTools.Core.Enums
@@ -9,97 +9,131 @@
     ViewData["Title"] = "QR Code Generator";
 }
 
-<div class="container py-5 mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-8">
+        <div class="col-12 col-lg-9 col-xl-8">
 
             <a asp-page="/Index"
-               class="btn btn-link px-0 mb-3 d-inline-flex align-items-center gap-1">
+               class="text-primary text-decoration-none d-inline-flex align-items-center gap-2 mb-4">
                 <i data-lucide="arrow-left"
-                   style="width: 16px; height: 16px;"></i>
+                   style="width: 18px; height: 18px;"></i>
                 Kembali
             </a>
 
-            <h1 class="display-4 mb-4">QR Code Generator</h1>
+            <header class="mb-4">
+                <h1 class="h2 fw-semibold mb-2">QR Code Generator</h1>
+                <p class="text-secondary mb-0">
+                    Buat kode QR dari URL dan sesuaikan tampilannya dengan logo pilihanmu.
+                </p>
+            </header>
 
             <form method="post" enctype="multipart/form-data">
 
-                <div class="mb-3">
-                    <label asp-for="Input.Url" class="form-label"></label>
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">Informasi QR Code</h2>
+                    </div>
 
-                    <input asp-for="Input.Url"
-                           class="form-control shadow-sm"
-                           type="url"
-                           placeholder="https://google.com" />
-
-                    <span asp-validation-for="Input.Url"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Input.Style" class="form-label">
-                        Gaya QR Code
-                    </label>
-
-                    <select asp-for="Input.Style"
-                            asp-items="Html.GetEnumSelectList<QrCodeStyle>()"
-                            class="form-select shadow-sm">
-                    </select>
-
-                    <span asp-validation-for="Input.Style"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="shadow-sm mb-3">
                     <div class="card-body">
-                        <p class="mb-3">
-                            Masukan Logo 
-                            (Format PNG, JPG, JPEG, atau WebP. Maksimal 2 MB)
+                        <p class="text-secondary small mb-4">
+                            Masukkan alamat tujuan dan tentukan gaya kode QR.
                         </p>
 
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i data-lucide="paperclip"
-                                   style="width: 16px; height: 16px;"></i>
-                            </span>
+                        <div class="row g-3 align-items-start mb-4">
+                            <label asp-for="Input.Url"
+                                   class="col-12 col-md-3 col-form-label">
+                            </label>
 
-                            <input asp-for="Input.Logo"
-                                   id="fileInput"
-                                   type="file"
-                                   class="form-control"
-                                   accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
+                            <div class="col-12 col-md-9">
+                                <input asp-for="Input.Url"
+                                       class="form-control"
+                                       type="url"
+                                       placeholder="https://google.com" />
+
+                                <span asp-validation-for="Input.Url"
+                                      class="text-danger small"></span>
+                            </div>
                         </div>
 
-                        <span asp-validation-for="Input.Logo"
-                              class="text-danger"></span>
+                        <div class="row g-3 align-items-start">
+                            <label asp-for="Input.Style"
+                                   class="col-12 col-md-3 col-form-label">
+                                Gaya QR Code
+                            </label>
 
-                        <div id="fileInfo"
-                             class="d-none mt-3 p-2 border rounded align-items-center justify-content-between gap-2">
-                            <div class="d-flex align-items-center gap-2 text-truncate">
-                                <i data-lucide="file-image"
-                                   style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                            <div class="col-12 col-md-9">
+                                <select asp-for="Input.Style"
+                                        asp-items="Html.GetEnumSelectList<QrCodeStyle>()"
+                                        class="form-select">
+                                </select>
 
-                                <div class="text-truncate">
-                                    <div id="fileName"
-                                         class="text-truncate fw-medium"></div>
-
-                                    <small id="fileSize"
-                                           class="text-secondary"></small>
-                                </div>
+                                <span asp-validation-for="Input.Style"
+                                      class="text-danger small"></span>
                             </div>
-
-                            <button id="removeFile"
-                                    type="button"
-                                    class="btn btn-sm btn-outline-danger flex-shrink-0">
-                                <i data-lucide="x"
-                                   style="width: 14px; height: 14px;"></i>
-                                Hapus
-                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex flex-wrap gap-2 mt-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">Logo QR Code</h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="text-secondary small mb-4">
+                            Opsional. Gunakan gambar PNG, JPG, JPEG, atau WebP
+                            dengan ukuran maksimal 2 MB.
+                        </p>
+
+                        <div class="row g-3 align-items-start">
+                            <label asp-for="Input.Logo"
+                                   class="col-12 col-md-3 col-form-label">
+                                File Logo
+                            </label>
+
+                            <div class="col-12 col-md-9">
+                                <input asp-for="Input.Logo"
+                                       id="fileInput"
+                                       type="file"
+                                       class="form-control"
+                                       accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
+
+                                <span asp-validation-for="Input.Logo"
+                                      class="text-danger small"></span>
+
+                                <div id="fileInfo"
+                                     class="d-none mt-3 p-3 border rounded align-items-center justify-content-between gap-3">
+                                    <div class="d-flex align-items-center gap-3 text-truncate">
+                                        <div class="flex-shrink-0 text-secondary">
+                                            <i data-lucide="file-image"
+                                               style="width: 22px; height: 22px;"></i>
+                                        </div>
+
+                                        <div class="text-truncate">
+                                            <div id="fileName"
+                                                 class="text-truncate fw-medium">
+                                            </div>
+
+                                            <small id="fileSize"
+                                                   class="text-secondary">
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <button id="removeFile"
+                                            type="button"
+                                            class="btn btn-sm btn-outline-danger flex-shrink-0">
+                                        <i data-lucide="x"
+                                           style="width: 14px; height: 14px;"></i>
+                                        Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
                     <button type="submit"
                             asp-page-handler="Generate"
                             class="btn btn-primary">
@@ -123,19 +157,23 @@
 
             @if (Model.QrCodeDataUrl is not null)
             {
-                <div class="mt-5 text-center">
-                    <h2 class="h5 mb-3">Hasil QR Code</h2>
+                <div class="card mt-4">
+                    <div class="card-header py-3">
+                        <h2 class="h6 fw-semibold mb-0">Hasil QR Code</h2>
+                    </div>
 
-                    <img id="qrCodeImage"
-                         src="@Model.QrCodeDataUrl"
-                         alt="Kode QR Anda"
-                         data-filename="@Model.Input.Url"
-                         class="img-fluid border rounded p-3"
-                         style="max-width: 300px;" />
+                    <div class="card-body text-center p-4">
+                        <img id="qrCodeImage"
+                             src="@Model.QrCodeDataUrl"
+                             alt="Kode QR untuk @Model.Input.Url"
+                             data-filename="@Model.Input.Url"
+                             class="img-fluid border rounded p-3"
+                             style="width: 100%; max-width: 300px;" />
 
-                    <p class="text-secondary mt-3 text-break">
-                        @Model.Input.Url
-                    </p>
+                        <p class="text-secondary text-break small mt-3 mb-0">
+                            @Model.Input.Url
+                        </p>
+                    </div>
                 </div>
             }
 
@@ -185,21 +223,23 @@
         downloadButton.disabled = !qrImage;
 
         downloadButton.addEventListener("click", () => {
-            const image = document.getElementById("qrCodeImage");
+            if (!qrImage?.src) return;
 
-            if (!image?.src) return;
+            try {
+                const url = new URL(qrImage.dataset.filename);
+                const hostname = url.hostname.replace(/^www\./, "");
+                const filename = `${hostname.replace(/\./g, "-")}-qr.png`;
 
-            const url = image.dataset.filename;
-            const hostname = new URL(url).hostname.replace(/^www\./, "");
-            const filename = `${hostname.replace(/\./g, "-")}-qr.png`;
+                const link = document.createElement("a");
+                link.href = qrImage.src;
+                link.download = filename;
 
-            const link = document.createElement("a");
-            link.href = image.src;
-            link.download = filename;
-
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            } catch {
+                // URL tidak valid; jangan memulai unduhan.
+            }
         });
 
         lucide.createIcons();
